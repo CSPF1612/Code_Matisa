@@ -1,0 +1,119 @@
+body {
+    background-color: #FFF;
+    margin: 0 auto;
+  }
+  
+  header {
+    background-color: #466995;
+    border-bottom: 1px solid #466995;
+    position: fixed;
+    /*tem sua posição fixada na tela do pc, n importa o quanto desça ou suba na página
+    o elemento sempre estará la*/
+    width: 100%;
+    z-index: 10;
+    /*se elementos ficam sobre o outro, isso determina qual fica por cima e qual pra baixo*/
+  }
+  
+  ul {
+    margin: 30px auto;
+    padding: 0 20px;
+    text-align: center;
+  }
+  
+  li {
+    color: #FFF;
+    font-family: 'Oswald', sans-serif;
+    font-size: 16px;
+    font-weight: 300;
+    text-transform: uppercase;
+    display: inline-block;
+    /*esse elemento pode ter wisth e height, e pode aparecer ao lado de outros elementos*/
+    /*se fosse inline: elemento so tem o espaço minimo ocupado, pode ter outro do lado*/
+    /*se fosse block: pega td o width do tag pai e height é ajustável*/
+    width: 80px;  
+  }
+  
+  li:hover {
+    color: #DBE9EE;
+  }
+  
+  h1 {
+    color: #466995;
+    font-family: 'Oswald', sans-serif;
+    font-size: 32px;
+    font-weight: 300;
+    text-transform: uppercase;
+  }
+  
+  h2 {
+    color: #333;
+    font-family: 'Varela Round', sans-serif;
+    font-size: 26px;
+    font-weight: 100;
+    margin: 0 auto 20px auto;
+  }
+  
+  h3 {
+    color: #466995;
+    font-family: 'Oswald', sans-serif;
+    font-size: 18px;
+    text-align: center;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 30px;
+  }
+  
+  h4 {
+    color: #466995;
+    font-family: 'Oswald', sans-serif;
+    font-size: 18px;
+    font-weight: 300;
+    letter-spacing: 2px;
+    text-align: center;
+    text-transform: uppercase
+  }
+  
+  p {
+    color: #333;
+    font-family: 'Varela Round', sans-serif;
+    font-size: 18px;
+  }
+  
+  footer {
+    background-color: #DBE9EE;
+    text-align: center;
+    height: 100px;
+  }
+  
+  .welcome {
+    background-color: #DBE9EE;
+    box-sizing: border-box;
+    padding: 40px;
+    text-align: center;
+    width: 100%;
+    position: relative;
+    /*a posição é relativa a oq seria sua posição original*/
+    /*se fosse absolute: posição relativa a tag pai*/
+    /*e fosse sticky: o elemento se posiciona tipo o FIXED quando sua tag pai é
+    scrollada pra fora da tela*/
+    top: 50px;
+  }
+  
+  .question {
+    text-align: center;
+    position: relative;
+    top: 40px;
+  }
+  
+  .answer {
+    border: 1px solid #466995;
+    margin: 20px;
+    display: inline-block;
+    /*se tivesse um float:left teria td o elemento jogado o máximo possivel pra esquerda*/
+    /*se tivesse um sub elemento com clear:left ele n teria nenhum elemento a sua esquerda*/
+  }
+  
+  .answer:hover {
+    background: #C0D6DF;
+    color: #FFF;
+  }

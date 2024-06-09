@@ -1,0 +1,130 @@
+nome = input('Digite o seu nome:')
+print('Seja bem vindo ao Python {}!'.format(nome))
+
+n1 = int(input('Digite um valor: '))
+n2 = int(input('Digite outro valor: '))
+s = n1 + n2
+print('A soma entre {0} e {1} vale {2}!'.format(n1, n2, s))
+
+n1 = input('Digite um valor: ')
+print(type(n1))
+print(n1.isnumeric())
+print(n1.isalpha())
+
+n1 = input('Digite alguma coisa: ')
+print('O tipo primitivo dessa coisa é: {}!'.format(type(n1)))
+print('Essa coisa é um número: {}'.format(n1.isnumeric()))
+print('Essa coisa é uma palavra: {}'.format(n1.isalpha()))
+print('Essa coisa é um espaço: {}'.format(n1.isspace()))
+print('Essa coisa é toda em minúsculo: {}'.format(n1.islower()))
+print('Essa coisa é toda em maiúsculo: {}'.format(n1.isupper()))
+print('Essa coisa é alfanumérico: {}'.format(n1.isalnum()))
+print('Essa coisa está capitalizada: {}'.format(n1.istitle()))
+
++ adição   - subtração   * multiplicação   / divisão   == igual
+** potência   // divisão inteira   % resto da divisão
+print('='*20)
+nome = input('Qual o seu nome? ')
+print('Prazer em te conhecer {:=^20}!'.format(nome))
+print('Para {} e {} temos\n a divisão com 2 casas decimais {:.2f}!'.format(n1, n2, d), end=' ')
+print('e eu sou maluco')
+
+n1 = int(input('Digite um número inteiro: '))
+n0 = n1 - 1
+n2 = n1 + 1
+print('Seu sucessor é {} e seu antecessor é {}!'.format(n2, n0))
+
+n1 = float(input('Digite um número: '))
+n2 = n1 * 2
+n3 = n1 * 3
+n4 = n1 ** (1/2)
+print('Seu dobro é {}, seu triplo é {}, e sua raiz quadrada é {}!'.format(n2, n3, n4))
+
+nota1 = float(input('Qual a sua nota da primeira prova: '))
+nota2 = float(input('Qual a sua nota da segunda prova: '))
+media = (nota1 + nota2) / 2
+print('Sua média de notas é de {}!'.format(media))
+
+m = float(input('Escreva sua altura em metros: '))
+cm = m * 100
+mm = m * 1000
+print('Sua altura também pode ser escrita como {}cm ou {}mm!'.format(cm, mm))
+
+n = int(input('Digite um número inteiro: '))
+print('1 x {} = {}'.format(n, n*1), end='   ')
+print('2 x {} = {}'.format(n, n*2), end='   ')
+print('3 x {} = {}'.format(n, n*3), end='   ')
+print('4 x {} = {}'.format(n, n*4), end='   ')
+print('5 x {} = {}'.format(n, n*5))
+print('6 x {} = {}'.format(n, n*6), end='   ')
+print('7 x {} = {}'.format(n, n*7), end='   ')
+print('8 x {} = {}'.format(n, n*8), end='   ')
+print('9 x {} = {}'.format(n, n*9), end='   ')
+print('10 x {} = {}'.format(n, n*10), end='   ')
+
+d = float(input('Quanto dinheriro você tem na sua carteira? R$'))
+m = d / 3.27
+print('Com esse dinheiro você pode comprar até ${:.2f} USD!'.format(m))
+
+l = float(input('Qual a largura da parede em metros: '))
+h = float(input('Qual a altura da parede em metros: '))
+a = l * h
+print('Como essa parede tem {:.2f}m², então é necessário cerca de {:.2f}L de tinta para pinta-la!'.format(a, a/2))
+
+p = float(input('Qual o preço do produto escolhido? R$'))
+np = p * 0.95
+print('Parabéns! Achamos uma promoção exclusiva para você e o preço total será de R${:.2f}!'.format(np))
+
+s = float(input('Qual era o seu salário no seu antigo emprego? R$'))
+ns = s * 1.15
+print('O salário que vamos te oferecer é 15% maior, um total de R${:.2f}!'.format(ns))
+
+c = float(input('Qual a temperatura em celcius na sua cidade: '))
+f = (c * 9 / 5) + 32
+print('A temperatura de {:.1f}°C é equivalente a {:.1f}°F!'.format(c, f))
+
+d = int(input('Quantos dias você ficou com o carro: '))
+km = float(input('Quantos Km você rodou com o carro: '))
+t = (d * 60) + (0.15 * km)
+print('O valor a ser pago pelo aluguel é de R${:.2f}!'.format(t))
+
+import math
+from math import ceil
+se n tiver baixado: emoji pipy
+na net que acha o pip install
+
+import math
+n = float(input('Digite um número Real: '))
+n = math.floor(n)
+print('O número Inteiro desse Real é {}!'.format(n))
+
+import math
+c1 = float(input('Digite o tamanho do cateto oposto em cm: '))
+c2 = float(input('Digite o tamanho do cateto adjacente em cm: '))
+hip = (pow(c1, 2) + pow(c2, 2))**(1/2)
+print('O tamanho da hipotenusa é de {:.2f} cm!'.format(hip))
+
+import math
+n = float(input('Digite um ângulo em graus: '))
+n = n * math.pi / 180
+s = math.sin(n)
+c = math.cos(n)
+t = math.tan(n)
+print('Seu sen={:.2f}; cos={:.2f}; tg={:.2f}!'.format(s, c, t))
+ 
+import random
+a = str(input('Qual o nome do primeiro aluno? '))
+b = str(input('Qual o nome do segundo aluno? '))
+c = str(input('Qual o nome do terceiro aluno? '))
+d = str(input('Qual o nome do quarto aluno? '))
+e = [a, b, c, d]
+random.shuffle(e)
+print('A ordem que os alunos vão apresentar é: {}, {}, {} e {}!'
+      .format(e[0], e[1], e[2], e[3]))
+
+import pygame
+pygame.init()
+pygame.mixer.music.load('abc.mp3')
+pygame.mixer.music.play()
+input()
+pygame.event.wait()

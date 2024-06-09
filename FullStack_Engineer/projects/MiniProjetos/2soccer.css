@@ -1,0 +1,101 @@
+body {
+    /* Old browsers */
+    background: #141E30;
+    /* Chrome 10-25, Safari 5.1-6 */
+    background: -webkit-linear-gradient(-45deg, #35577D, #141E30);
+    /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    background: linear-gradient(-45deg, #35577D, #141E30);
+    /*setando cor do background de diferentes formas dependendo do browser*/
+    margin: 0;
+    padding: 0;
+  }
+  
+  h1 {
+    color: #FFF !important;
+    /*esse importante faz com q seja usada ESSA cor, msm q outras tenha prioridade*/
+    font-size: 2em;
+    padding-top: 100px;
+    width: 100%;
+    font-family: Georgia;
+    text-align: center;
+  }
+  
+  h2 {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+    color: rgba(255, 255, 255, 0.5);
+    font-weight: 100;
+    font-size: 22px;
+    line-height: 24px;
+    padding-bottom: 30px;
+    text-align: left;
+    width: 70%;
+    font-family: Georgia;
+  }
+  
+  p {
+    color: aliceblue;
+    line-height: 1.3em;
+    text-align: left;
+    width: 100%;
+    font-family: Helvetica;
+    font-size: 18px;
+    font-weight: bold;
+    /*fala se é normal, bold ou itálico, é naturalmente normal mas pd ser q ajude se td com prioridade*/
+  }
+  
+  .byline {
+    font-family: Helvetica;
+    color: rgba(255, 255, 255, 0.5);
+    float: left;
+    font-size: 14px;
+    padding-left: 10px;
+    text-transform: uppercase;
+    /*faz td virar MAIUSCULOOOO*/
+  }
+  
+  .caption {
+    display: block;
+    font-family: 'Playfair Display', serif;
+    /*se tem 2 palavras bota dentro de '' que facilita a vida*/
+    font-size: 14px;
+    font-style: italic;
+    line-height: 14px;
+    margin-left: 20px;
+    padding: 10px;
+    position: relative;
+    top: 80%;
+    width: 60%;
+    background-color: white;
+    /*cor do espaço atras*/
+    color: black;
+    /*cor do próprio elemento*/
+  }
+  
+  .content {
+    padding: 40px;
+  }
+  
+  .image {
+    background-image: url('https://content.codecademy.com/courses/freelance-1/unit-2/soccer.jpeg');
+    /*imagem botada no fundo do elemento, mas se tivesse vindo de arquivo local seria 'images/mountains.jpg' onde o seu relative file path é,
+    dentro do folder q ta o projeto tem outra pasta chamada 'imagens' e aí dentro dela tem um arquivo mountains.jpg*/
+    background-size: cover;
+    background-position: center;
+    height: 300px;
+  }
+  
+  .writer-img {
+    -webkit-box-shadow: 5px 0px 5px 0px rgba(0, 0, 50, 0.97);
+    -moz-box-shadow: 5px 0px 5px 0px rgba(0, 0, 50, 0.97);
+    box-shadow: 5px 0px 5px 0px rgba(0, 0, 50, 0.97);
+    float: left;
+    width: 50px;
+  }
+
+  /*
+  .ingredients li {
+  list-style: square;
+  }
+  nesse emeplo de outro código colocamos os items dentr da unordered list de class=ingredients com quadrados em vez de bolas
+  */
+  

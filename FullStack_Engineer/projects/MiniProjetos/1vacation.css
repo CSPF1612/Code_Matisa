@@ -1,0 +1,92 @@
+/* basico de css*//**/
+* {
+    border: 1px solid red;
+  }
+  /*o simbolo de * significa tds os elementos da pagina, border de 1 pixel solida vermelha*/
+
+  p {
+    color: green;
+  }
+  /*todo paragrafo é verde*/
+  
+  h1 {
+    color: maroon;
+  }
+  
+  .title {
+    color: teal;
+  }
+  /*td elemento com classe 'title' tem essa cor, tem prioridade sobre p e h1*/
+  
+  .uppercase {
+    text-transform: uppercase;
+  }
+  
+  #article-title {
+    font-family: cursive;
+  }
+  /*o unico elemento com esse id sofre a modificação, tem prioridade sobre mudança nos CLASS e sobre mudanças nos P e H1*/
+  
+  a[href*='florence'] {
+    color: lightgreen;
+  }
+  /*muda td A que tem um link com a string 'florence' no meio do link*/
+  
+  a[href*='beijing'] {
+    color: lightblue;
+  }
+  
+  a[href*='seoul'] {
+    color: lightpink;
+  }
+  
+  a:hover {
+    color:darkorange;
+  }
+  /*muda td A quando vc hover(passa o mause em cima) dele*/
+  
+  .heading-background {
+    background-color: aqua;
+  }
+  
+  #publish-time {
+    color: lightgray;
+  }
+  
+  h5 {
+    color: yellow;
+  }
+  
+  .author-class {
+    color: pink;
+  }
+  
+  #author-id {
+    color: cornflowerblue;
+  }
+  
+  h2.destination {
+    font-family: Tahoma;
+  }
+  /*dentre os H2, tds com essa CLASS='destination' sofre a alteração*/
+  
+  .description h5 {
+    color: blueviolet;
+  }
+  /*dentre tds os elementos com essa CLASS, só os H5 sofre a alteração*/
+  
+  li h4 {
+    color: gold;
+  }
+  /*dentro de tds os LI, qqr elemento H4 sofre a alteração*/
+  
+  h4 {
+    color: dodgerblue;
+  }
+  
+  li,
+  h5 {
+    font-family: monospace;
+  }
+  /*tds os LI e os H5 sofrem essa alteração*/
+  

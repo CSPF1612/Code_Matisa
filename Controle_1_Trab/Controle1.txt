@@ -1,0 +1,1033 @@
+- DEFINIR RESIDUOS, POLOS E TERMO DIRETO:
+{
+import numpy as np
+import matplotlib.pyplot as plt
+import control as co
+import ipdb
+from scipy import signal
+# PARA F(s) = B(s)/A(s)
+# COEFs DO NUMERADOR B(s)
+num = [2, 5, 3, 6]
+# COEFs DO DENOMINADOR A(s)
+den = [1, 6, 11, 6]
+# DADO O NOME DAS VARIAVEIS A SEREM DEFINIDAS
+r, p, k = signal.residue(num, den)
+print('Resíduos:')
+print(r)
+print('Polos:')
+print(p)
+print('Termo direto:')
+print(k)
+}
+
+- DESENHAR FUNÇÃO DE SISTEMAS EM SÉRIE, PARALELO E REALIMENTAÇÃO:
+{
+import numpy as np
+import matplotlib.pyplot as plt
+import control as co
+import ipdb
+num1 = [10]
+den1 = [1, 2, 10]
+num2 = [5]
+den2 = [1, 5]
+sys1 = co.tf(num1, den1)
+sys2 = co.tf(num2, den2)
+print('Sistema 1:')
+print(sys1)
+print('Sistema 2:')
+print(sys2)
+sys_series = co.series(sys1, sys2)
+print('Sistemas em cascata/série:')
+print(sys_series)
+sys_parallel = co.parallel(sys1, sys2)
+print('Sistemas em paralelo:')
+print(sys_parallel)
+sys_feedback = co.feedback(sys1, sys2)
+print('Sistemas com realimentação:')
+print(sys_feedback)
+}
+
+- GRAFICOS DE CONTROLADORES PROPORCIONAIS, INTEGRAIS E/OU DERIVATIVOS
+{
+import numpy as np
+import matplotlib.pyplot as plt
+import control as co
+import ipdb
+# Definindo a funcao de transferencia
+numG = [0, 1]
+denG = [1, 2]
+# G = 1/(s+2)
+G = co.tf(numG, denG)
+#---------------------------------------------------------
+# Controle proporcional  (P)
+# Criando um vetor T (tempo) para simular : de 0s até 0.5s
+T  = np.linspace(0,0.5,51)
+# Criando um vetor Krange para variar o ganho proporcional
+Krange = np.linspace(40,100,7)
+plt.show()
+for Kp in Krange:
+  G_MF = co.feedback(Kp*G,1)
+  t,y  = co.step_response(G_MF,T)
+  plt.plot(t,y)
+plt.axis([0,0.2,0,1])
+plt.grid()
+# Debug irá parar na linha se retirar o comentário
+# ipdb.set_trace()
+#---------------------------------------------------------
+# Controle integral  (I)
+# Criando um vetor T (tempo) para simular : de 0s até 10s
+T  = np.linspace(0,10,1001)
+# Criando um vetor Krange para variar o ganho integral
+Krange = np.linspace(1,10,10)
+plt.show()
+for Ki in Krange:
+  numC = [0, Ki]
+  denC = [1, 0]
+  Gi   = co.tf(numC, denC)
+  G_MF = co.feedback(Gi*G,1)
+  t,y  = co.step_response(G_MF,T)
+  plt.plot(t,y)
+plt.axis([0,10,0,1.4])
+plt.grid()
+#---------------------------------------------------------
+# Controle proporcional + integral (PI)
+# Criando um vetor T (tempo) para simular : de 0s até 0.5s
+T  = np.linspace(0,0.5,51)
+# Criando um vetor Krange para variar o ganho proporcional
+Krange = np.linspace(40,50,6)
+Ti = 0.02
+plt.show()
+for Kp in Krange:
+  numC = [Kp*Ti, Kp]
+  denC = [Ti, 0]
+  Gpi  = co.tf(numC, denC)
+  G_MF = co.feedback(Gpi*G,1)
+  t,y  = co.step_response(G_MF,T)
+  plt.plot(t,y)
+plt.axis([0,0.2,0,1.3])
+plt.grid()
+#---------------------------------------------------------
+# Controle proporcional + derivativo (PD)
+# Criando um vetor T (tempo) para simular : de 0s até 0.5s
+T  = np.linspace(0,0.5,51)
+# Criando um vetor Krange para variar o ganho proporcional
+Krange = np.linspace(40,100,7)
+Td = 0.005
+plt.show()
+for Kp in Krange:
+  numC = [Kp*Td, Kp]
+  denC = [0, 1]
+  Gpd  = co.tf(numC, denC)
+  G_MF = co.feedback(Gpd*G,1)
+  t,y  = co.step_response(G_MF,T)
+  plt.plot(t,y)
+plt.axis([0,0.2,0,1])
+plt.grid()
+#---------------------------------------------------------
+# Controle proporcional + integral + derivativo (PID)
+# Criando um vetor T (tempo) para simular : de 0s até 0.5s
+T  = np.linspace(0,0.5,51)
+# Criando um vetor Krange para variar o ganho proporcional
+Krange = np.linspace(50,60,6)
+Ti = 0.02
+Td = 0.005
+plt.show()
+for Kp in Krange:
+  numC = [Kp*Td*Ti, Kp*Ti, Kp]
+  denC = [Ti, 0]
+  Gpid = co.tf(numC, denC)
+  G_MF = co.feedback(Gpid*G,1)
+  t,y  = co.step_response(G_MF,T)
+  plt.plot(t,y)
+plt.axis([0,0.25,0,1.3])
+plt.grid()
+#---------------------------------------------------------
+# Malha aberta
+# Criando um vetor T (tempo) para simular : de 0s até 10s
+T  = np.linspace(0,10,1001)
+plt.show()
+t,y = co.step_response(G,T)
+plt.plot(t,y)
+plt.axis([0,10,0,1])
+plt.grid()
+}
+
+- TRANSFORMAÇÃO EE <-> TF
+{
+import numpy as np
+import matplotlib.pyplot as plt
+import control as co
+import ipdb
+from scipy.optimize import linprog
+A = [  [ 0,   1,   0],
+       [ 0,   0,   1],
+       [-5, -25,  -5] ]
+B = [    [0],
+        [25],
+      [-120] ]
+C = [ 1, 0, 0 ]
+D = 0
+print('Conversão EE para FT:')
+sysTF = co.ss2tf(A,B,C,D)
+print(sysTF)
+# Exemplo [2]-[3]
+# Definindo a função de transferência
+# YsUs = s/(s^3 + 14*s^2 + 56*s + 160)
+num  = [1, 0]
+den  = [1, 14, 56, 160]
+YsUs = co.tf(num, den)
+print('Conversão FT para EE:')
+sysEE = co.tf2ss(num,den)
+print(sysEE)
+}
+
+- SISTEMA MECÂNICO: FT E GRAFICOS
+{
+print('Definindo a representação de EE do EXEMPLO 3:')
+print('OBS.: usando valores para massa, constante da mola e coeficiente do amortecedor')
+m = 5   # massa
+k = 4   # constante elástica da mola
+b = 2   # coeficiente de atrito viscoso do amortecedor
+A = [ [  0,    1 ],
+      [-k/m, -b/m] ]
+B = [     [b/m],
+      [k/m - (b/m)**2] ]
+C = [ 1, 0 ]
+D = 0
+print('Conversão EE para FT do sistema mecânico:')
+sysTF = co.ss2tf(A,B,C,D)
+print(sysTF)
+t,y  = co.impulse_response(sysTF)
+plt.show()
+plt.plot(t,y)
+#plt.axis([0,0.2,0,1])
+plt.grid()
+sysEE = co.ss(A,B,C,D)
+t,y  = co.impulse_response(sysEE)
+plt.show()
+print('Utilizando diretamente o EE...')
+plt.plot(t,y)
+#plt.axis([0,0.2,0,1])
+plt.grid()
+C = [ 0, 1 ];
+sysEE = co.ss(A,B,C,D)
+t,y  = co.impulse_response(sysEE)
+plt.show()
+print('Alterando a saída para velocidade...')
+plt.plot(t,y)
+#plt.axis([0,0.2,0,1])
+plt.grid()
+}
+
+- CIRCUITO RLC: TF E GRAFICOS
+{
+# Representação em espaço de estados (EE)
+print('Definindo a representação de EE do Circuito RLC ')
+R = 100    # resistência
+L = 30e-3  # indutância
+C = 5e-6   # capacitância
+A = [ [   0,       1 ],
+      [-1/(L*C), -R/L] ]
+B = [    [0],
+      [1/(L*C)] ]
+C = [ 1, 0 ]
+D = 0
+print('Conversão EE para FT do sistema RLC:')
+sysTF = co.ss2tf(A,B,C,D)
+t,y   = co.step_response(sysTF)
+plt.show()
+plt.plot(t,y)
+#plt.axis([0,0.2,0,1])
+plt.grid()
+sysEE = co.ss(A,B,C,D)
+t,y   = co.step_response(sysEE)
+plt.show()
+print('Utilizando diretamente o EE')
+plt.plot(t,y)
+#plt.axis([0,0.2,0,1])
+plt.grid()
+}
+
+- CIRCUITO RC: TF E GRAFICOS
+{
+# Representação em espaço de estados (EE)
+print('Definindo a representação de EE do Circuito RC da aula 5:')
+print('- Degrau unitário só na entrada 1 (fonte)')
+print('- Degrau de 0,5V para o carregamento do capacitor, entrada 2')
+print('- entrada 1 + entrada 2 : SUPERPOSIÇÃO! (já feito anteriormente...)')
+print('- Degrau unitário na entrada 1 e entrada 2 (ao mesmo tempo)')
+tfinal = 0.01 # tempo de simulação
+R = 100   # ohms
+C = 20e-6 # farads
+A = [-1/(R*C)]
+Beta1 = -1/(R*C)
+B = [1/(R*C), Beta1]
+C = [1]
+D = [0, 1]
+sysEE = co.ss(A,B,C,D)
+# Resposta ao degrau na fonte apenas
+t6,y6 = co.step_response(sysEE,tfinal,[0],0)
+# Resposta ao degrau no valor inicial da tensão no capacitor
+t7,y7 = co.step_response(sysEE,tfinal,[-0.5],1)
+# Resposta ao degrau na fonte e no capacitor e as respostas estão em y8
+t8,y8 = co.step_response(sysEE,tfinal)
+plt.show()
+print('----------')
+print('Simulação com EE de duas entradas')
+plt.plot(t6,y6[0][0])
+#plt.axis([0,0.2,0,1])
+plt.plot(t7,y7[0][0])
+plt.plot(t7,y6[0][0]+y7[0][0]) # superposição de y6 e y7
+plt.plot(t8,y8[0][0]+y8[0][1]) # superposição de y8 (obtida no mesmo comando)
+plt.grid()
+}
+
+- PENDULO INVERTIDO
+{
+!pip install slycot
+!pip install control
+import numpy as np
+import matplotlib.pyplot as plt
+import control as co
+import ipdb
+from scipy import signal
+# PARAMETROS
+m = 0.2      # massa da haste em Kg
+l = 0.3      # comprimento ate o centro de gravidade em m
+M = 0.8      # massa do carro em Kg
+I = 0.006    # momento de inercia da haste em Kg.m^2
+g = 9.80665  # aceleracao da gravidade em m^2
+# THETA(s)/U(s)
+b0 = m*l
+a0 = (m*l)**2 - (M + m)*(I + m*(l**2))
+a1 = 0
+a2 = (M + m)*m*g*l
+# Numerador e denominador da FT (THETA/U)
+num_haste_theta_u = [ 0,  0, b0/a0]
+den_haste_theta_u = [1, a1/a0, a2/a0]
+r1, p1, k1 = signal.residue(num_haste_theta_u, den_haste_theta_u)
+print('Resíduos, Polos e termo direto:')
+print(r1, p1, k1)
+# FT
+Gs1  = co.tf(num_haste_theta_u,den_haste_theta_u)
+Gs1x = signal.TransferFunction(num_haste_theta_u, den_haste_theta_u)
+print(Gs1)
+p1, z1 = co.pzmap(Gs1, plot=True, grid=True, title='Pole Zero Map THETA/U')
+print('Polos e zeros:')
+print(p1, z1)
+# X(s)/U(s)
+b0 = -(I + m*(l**2))
+b1 = 0
+b2 = m*g*l
+a0 = (m*l)**2 - (M + m)*(I + m*(l**2))
+a1 = 0
+a2 = (M + m)*m*g*l
+a3 = 0
+a4 = 0
+# Numerador e denominador da FT (X/U)
+num_haste_x_u = [b0/a0, b1/a0, b2/a0]
+den_haste_x_u = [1, a1/a0, a2/a0, a3/a0, a4/a0]
+r2, p2, k2 = signal.residue(num_haste_x_u, den_haste_x_u)
+print('Resíduos, Polos e termo direto:')
+print(r2, p2, k2)
+# FT
+Gs2 = co.tf(num_haste_x_u,den_haste_x_u)
+print(Gs2)
+p2, z2 = co.pzmap(Gs2, plot=True, grid=True, title='Pole Zero Map X/U')
+print('Polos e zeros:')
+print(p2, z2)
+# Para X1 = THETA; X2 = THETA'; X3 = x; X4 = x'.
+a21 = -((M + m)*m*g*l)/((m*l)**2 - (M + m)*(I + m*(l**2)))
+a41 = -(g*(m*l)**2)/((M + m)*(I + m*(l**2))-(m*l)**2)
+A = [ [  0,  1,  0,  0],
+      [a21,  0,  0,  0],
+      [  0,  0,  0,  1],
+      [a41,  0,  0,  0] ]
+b21 = (m*l)/((m*l)**2 - (M + m)*(I + m*(l**2)))
+b41 = (I + m*(l**2))/((M + m)*(I + m*(l**2))-(m*l)**2)
+B = [ [ 0 ],
+      [b21],
+      [ 0 ],
+      [b41] ]
+C = [ [1, 0, 0, 0],
+      [0, 0, 1, 0] ]
+D = [ [0],
+      [0] ]
+Gsee = co.ss(A,B,C,D)
+# Não funcionou a conversão para TF com 2 saídas... ??? slycot error...
+# No MatLab, tudo ok!!!
+# GsTFs = co.ss2tf(Gsee)
+print(Gsee)
+}
+
+- PENDULO INVERTIDO com PID
+{
+#!apt update
+#!apt install imagemagick
+#!apt install pdf2svg
+#!apt install texlive texlive-latex-extra
+#!pip install git+git://github.com/mkrphys/ipython-tikzmagic.git
+#!apt upgrade
+Kp = 40  # ganho proporcional
+Ki = 100 # ganho integral
+Ti = 1   # tempo integral
+Kd = 5   # ganho derivativo
+Td = 1   # tempo derivativo
+#
+# Funcao de transferencia disturbio/theta
+# deltaF = 10 N por 0.05 segundos
+#
+# GsPID = Kp + (Ki/(Ti*s)) + Kd*Td*s;
+# GsPID = ( (Kd*Td*Ti)*s^2 + (Kp*Ti)*s + Ki )/( Ti*s )
+#
+s = co.tf('s') # igual o MatLab!!! (mais facil...)
+GsPID0 = Kp + (Ki/(Ti*s)) + Kd*Td*s
+num_PID = [ Kd*Td*Ti, Kp*Ti, Ki ]
+den_PID = [ Ti, 0 ]
+# Controlador FT
+GsPID   = co.tf(num_PID,den_PID)
+GsPIDx  = signal.TransferFunction(num_PID, num_PID)
+# Controlador + Planta do Pendula : FT de malha fechada
+GsPIDGs1MF = co.feedback(Gs1,GsPID,1)
+# Vetor de tempo
+t = np.linspace(0,10,201)
+# Vetor de entrada : função retangular com valor 10 nos primeiros 50 ms e
+# valor 0 no restante
+entrada = np.linspace(0,0,200)
+entrada = np.insert(entrada,0,10)
+numerator = np.convolve(den_PID , num_haste_theta_u)
+den1      = np.convolve(den_haste_theta_u , den_PID)
+den2      = np.convolve(num_haste_theta_u , num_PID)
+if (len(den2) > len(den1)):
+  denx = np.full(len(den2),0.0)
+  for i in range(len(den1)):
+    denx[i+1] = den1[i]
+  den1 = denx
+  denominator = den1 - den2
+elif (len(den1) > len(den2)):
+  denx = np.empty(len(den1))
+  for i in range(len(den2)):
+    denx[i+1] = den2[i]
+  den2 = denx
+  denominator = den1 - den2
+system = signal.TransferFunction(numerator, denominator)
+#print(system, numerator, denominator)
+tout, yout, xout = signal.lsim(system,U=entrada,T=t,X0=None,interp=False)
+#não funcionou... ???
+#t,y = co.forced_response(GsPIDGs1MF,T=t,U=entrada,X0=0.0,transpose=False,interpolate=False,return_x=None,squeeze=None)
+plt.show()
+saida = yout
+yout = yout*180.0/np.pi
+plt.plot(tout,yout)
+plt.plot(tout,entrada)
+plt.grid()
+#--------------------------------------------------
+Gs2Gs1 = Gs2/Gs1
+#print(Gs2/Gs1,Gs2,Gs1)
+num2  = np.convolve(num_haste_x_u , den_haste_theta_u)
+#print(num2)
+den2 = np.convolve(den_haste_x_u , num_haste_theta_u)
+#print(den2)
+sys2 = signal.TransferFunction(num2, den2)
+#sys2 = signal.lti(num2, den2)
+#print(sys2)
+t2, y2, x2 = signal.lsim(sys2,U=saida,T=t,X0=None,interp=True)
+plt.show()
+plt.plot(t2,y2)
+plt.axis([0,5,-0.1,0.1])
+plt.grid()
+#--------------------------------------------------
+# Representacao EE vindo do MatLab com PID incluso
+a = [ [     0,       1,       0,       0,       0,       0,       0],
+      [ 28.84,       0,       0,       0,  -7.353,  -14.71,  -18.38],
+      [     0,       0,       0,       1,       0,       0,       0],
+      [-1.731,       0,       0,       0,   2.941,   5.882,   7.353],
+      [     0,       0,       0,       0,       1,       0,       0],
+      [     0,       0,       0,       0,       0,       1,       0],
+      [    16,       0,       0,       0,       0,       0,       0] ]
+b = [ [    0  ],
+      [-2.941 ],
+      [     0 ],
+      [ 1.176 ],
+      [     0 ],
+      [     0 ],
+      [     0 ] ]
+c = [ [ 1,   0,   0,   0,   0,   0,   0 ],
+      [ 0,   0,   1,   0,   0,   0,   0 ] ]
+d = [ [ 0 ],
+      [ 0 ] ]
+sys3 = signal.lti(a,b,c,d)
+t3, y3, x3 = signal.lsim(sys3,U=entrada,T=t,X0=None,interp=False)
+plt.show()
+plt.plot(t2,y2)
+plt.axis([0,5,-0.1,0.1])
+plt.grid()
+}
+
+- RESPOSTAS A UM SISTEMA DE 1ª ORDEM
+{
+import numpy as np
+import matplotlib.pyplot as plt
+import control as co
+import ipdb
+#
+# Especificando a funcao de transferencia = s, que é a variavel de Laplace
+#
+s = co.tf('s');
+#
+# Influência da constante T nos sistemas de 1a ordem
+#
+sys1 = 1/(0.01*s + 1) # T1 = 0.01
+sys2 = 1/( 0.1*s + 1) # T1 = 0.1
+sys3 = 1/( 1.0*s + 1) # T1 = 1.0
+# Mapa de polos e zeros dos 3 sistemas com T1 < T2 < T3
+plt.show()
+p1, z1 = co.pzmap(sys1)
+p2, z2 = co.pzmap(sys2)
+p3, z3 = co.pzmap(sys3)
+# Resposta ao degrau dos 3 sistemas com T1 < T2 < T3
+T  = np.linspace(0,10,1001)
+t1,y1 = co.step_response(sys1,T)
+t2,y2 = co.step_response(sys2,T)
+t3,y3 = co.step_response(sys3,T)
+plt.show()
+plt.plot(t1,y1)
+plt.plot(t2,y2)
+plt.plot(t3,y3)
+plt.grid()
+plt.axis([0,5.0,0,1.01])
+plt.title('Resposta ao degrau : sistema de 1a ordem')
+print('Resposta ao degrau : sistema de 1a ordem')
+# Resposta a rampa dos 3 sistemas com T1 < T2 < T3
+t1,y1 = co.step_response(sys1*1/s,T)
+t2,y2 = co.step_response(sys2*1/s,T)
+t3,y3 = co.step_response(sys3*1/s,T)
+plt.show()
+plt.plot(t1,y1)
+plt.plot(t2,y2)
+plt.plot(t3,y3)
+plt.plot(t3,t3,'--')
+plt.grid()
+plt.axis([0,2.0,0,2.0])
+plt.title('Resposta à rampa : sistema de 1a ordem')
+print('Resposta à rampa : sistema de 1a ordem')
+# Resposta ao impulso dos 3 sistemas com T1 < T2 < T3
+t1,y1 = co.impulse_response(sys1,T)
+t2,y2 = co.impulse_response(sys2,T)
+t3,y3 = co.impulse_response(sys3,T)
+plt.show()
+plt.plot(t1,y1)
+plt.plot(t2,y2)
+plt.plot(t3,y3)
+plt.grid()
+plt.axis([0,0.5,0,100.0])
+plt.title('Resposta ao impulso : sistema de 1a ordem')
+print('Resposta ao impulso : sistema de 1a ordem')
+}
+
+- RESPOSTAS A UM SISTEMA DE 2ª ORDEM
+{
+import numpy as np
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+import control as co
+import ipdb
+#
+# Especificando a funcao de transferencia = s, que é a variavel de Laplace
+#
+s = co.tf('s');
+#
+# Parametros dos sistemas de 2a ordem
+#
+zeta = 0
+wn   = 1
+#
+# degrau
+#
+Zetarange = np.linspace(0,2,21)
+t         = np.linspace(0,12,121)
+jj = 1
+plt.show()
+for zeta in Zetarange:
+  Cs = wn**2 / (s**2 + 2*zeta*wn*s + wn**2)
+  t_step, y_step  = co.step_response(Cs,t)
+  t_step = t_step*wn
+  plt.plot(t_step,y_step)
+plt.grid()
+plt.axis([0,12,0,2])
+plt.title('Resposta ao degrau : sistema de 2a ordem')
+print('Resposta ao degrau : sistema de 2a ordem')
+#
+# impulso
+#
+plt.show()
+Zetarange = np.linspace(0.1,1,10)
+for zeta in Zetarange:
+  Cs = wn**2 / (s**2 + 2*zeta*wn*s + wn**2);
+  t_imp, y_imp = co.impulse_response(Cs,t)
+  t_imp = t_imp*wn
+  plt.plot(t_imp,y_imp)
+plt.grid()
+plt.axis([0,12,-1,1])
+plt.title('Resposta ao impulso : sistema de 2a ordem')
+print('Resposta ao impulso : sistema de 2a ordem')
+#
+# Exemplo 1 da aula 11
+#
+A = [ [-1 , -1],
+      [6.5,  0] ]
+B = [ [1, 1],
+      [1, 0] ]
+C = [ [1, 1], 
+      [1, 0] ]
+D = [ [0, 0],
+      [0, 0] ]
+sysEE = co.ss(A,B,C,D)
+tee, yee = co.step_response(sysEE)
+plt.show()
+print('Sistema em EE - exemplo 1')
+plt.plot(tee,yee[0,0])
+plt.grid()
+plt.title('Resposta ao sistema em EE : entrada 1 saída 1')
+plt.show()
+plt.plot(tee,yee[0,1])
+plt.grid()
+plt.title('Resposta ao sistema em EE : entrada 2 saída 1')
+plt.show()
+plt.plot(tee,yee[1,0])
+plt.grid()
+plt.title('Resposta ao sistema em EE : entrada 1 saída 2')
+plt.show()
+plt.plot(tee,yee[1,1])
+plt.grid()
+plt.title('Resposta ao sistema em EE : entrada 2 saída 2')
+#
+# Exemplo 2 da aula 11 : função ord2 não encontrada no python/control lib
+#
+#
+# Exemplo 3 da aula 11
+#
+Zetarange  = np.linspace(0,1,6)
+plt.show()
+wn = 1
+for zeta in Zetarange:
+  Cs = 1 / (s**2 + 2*zeta*s + 1)
+  t_step, y_step = co.step_response(Cs,10)
+  t_step = t_step*wn
+  plt.plot(t_step,y_step)
+plt.grid()
+plt.title('Sistema em TF - exemplo 3')
+print('Sistema em TF - exemplo 3')
+#-----------------------------------
+# Exemplo de gráfico de superfície simples
+# a = np.array([1, 2, 3])
+# b = np.array([4, 5, 6])
+# a, b = np.meshgrid(a, b)
+# surface plot for a + b
+# fig = plt.figure()
+# axes = fig.gca(projection ='3d')
+# axes.plot_surface(a, b, a + b)
+# plt.show()
+#-----------------------------------
+#
+Zetarange2 = np.linspace(0,1,101)
+t          = np.linspace(0,10,101)
+y = np.zeros((101,101))
+ii = 0
+wn = 1
+for zeta in Zetarange2:
+  Cs = 1 / (s**2 + 2*zeta*s + 1)
+  t_2, y_2 = co.step_response(Cs,t)
+  jj = 0
+  for jj in range(101):
+    y[ii][jj-1] = y_2[jj-1]
+  ii = ii + 1
+fig = plt.figure()
+ax = fig.gca(projection='3d')
+fig.suptitle('Exemplo 3D')
+ax.set_xlabel('Tempo(seg)')
+ax.set_ylabel('Zeta')
+ax.set_zlabel('c(t)')
+#tmp = Zetarange2[::-1]
+X, Y = np.meshgrid(t_2*wn, Zetarange2)
+Z = y
+ax.plot_surface(X, Y, Z, linewidth=0.2, antialiased=False)
+print('Sistema em TF - exemplo 3D')
+#
+# Exemplo 4 da aula 11
+#
+Cs  = 25 / (s**2 + 6*s + 25)
+t   = np.linspace(0,5,1001)
+t,y = co.step_response(Cs,t)
+plt.show()
+print('Sistema em TF - exemplo 4')
+plt.plot(t,y)
+plt.grid()
+#plt.axis([0,12,-1,1])
+plt.title('Sistema em TF - exemplo 4')
+#
+r = 0
+while ( y[r] < 1.0001 ):
+  r = r + 1
+# tempo de subida
+rise_time = (r - 1)*0.005
+print('Tempo de subida: ',rise_time)
+# valor e o tempo do sobressinal (pico)
+ymax = np.max(y)
+tp = np.where(y == np.amax(y))
+peak_time = (tp[0][0] - 1)*0.005
+max_overshoot = ymax - 1
+print('Valor de sobressinal (overshoot) e tempo de pico: ',peak_time,' e ',max_overshoot);
+# tempo de acomodação
+r = np.size(y) - 1
+while ( y[r] > 0.98 and y[r] < 1.02 ):
+  r = r - 1
+settling_time = (r - 1)*0.005
+print('Tempo de acomodação:',settling_time)
+#
+# Exemplo 5 da aula 11
+#
+Cs = 1 / (s**2 + 0.2*s + 1)
+t_imp, y_imp = co.impulse_response(Cs,50)
+plt.show()
+plt.plot(t_imp,y_imp)
+plt.grid()
+print('Sistema em TF - exemplo 5 : alternativa #1')
+# Alternativa a função impulso
+Cs = s / (s**2 + 0.2*s + 1)
+t_step, y_step = co.step_response(Cs,50)
+plt.show()
+plt.plot(t_step,y_step)
+plt.grid()
+print('Sistema em TF - exemplo 5 : alternativa #2')
+}
+
+- GRÁFICOS DE LUGARES DAS RAIZES - EX.1
+{
+import numpy as np
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+import control as co
+import ipdb
+#
+# Especificando a funcao de transferencia = s, que é a variavel de Laplace
+#
+s = co.tf('s');
+#
+# Parametros dos sistemas de 2a ordem
+#
+num  = (s+3)
+den  = s*(s+1)*(s**2+4*s+16)
+den2 = (s**2+4*s+16)
+#
+sys  = num/den
+sys2 = 1/den
+p    = co.poles(sys)   # todos os polos
+p2   = co.poles(sys2)  # so' os polos complexos
+print('Polos:')
+print(p)
+z    = co.zeros(sys)   # todos os zeros
+print('Zeros:')
+print(z)
+#
+#control.root_locus(sys, kvect=None, xlim=None, ylim=None, plotstr=None, plot=True, print_gain=None, grid=None, ax=None, **kwargs)
+rlist, klist = co.root_locus(sys)
+plt.show()
+lista1x = []
+lista1y = []
+lista2x = []
+lista2y = []
+lista3x = []
+lista3y = []
+lista4x = []
+lista4y = []
+for ii in range(len(rlist)):
+  for jj in range(len(rlist[ii])):
+    if ii == 0:
+      plt.plot(rlist[ii][jj].real,rlist[ii][jj].imag,'x')
+      for kk in range(len(z)):
+        plt.plot(z[kk].real,z[kk].imag,'o')
+    if jj == 0:
+      lista1x.append(rlist[ii][jj].real)
+      lista1y.append(rlist[ii][jj].imag)
+    elif jj == 1:
+      lista2x.append(rlist[ii][jj].real)
+      lista2y.append(rlist[ii][jj].imag)
+    elif jj == 2:
+      lista3x.append(rlist[ii][jj].real)
+      lista3y.append(rlist[ii][jj].imag)
+    elif jj == 3:
+      lista4x.append(rlist[ii][jj].real)
+      lista4y.append(rlist[ii][jj].imag)
+plt.plot(lista1x,lista1y)
+plt.plot(lista2x,lista2y)
+plt.plot(lista3x,lista3y)
+plt.plot(lista4x,lista4y)
+plt.grid()
+plt.axis([-6,6,-6,6])
+plt.title('Gráfico do Lugar das Raizes de G(s) = K(s+3)/[s(s+1)(s^2+4s+16)]')
+print('Gráfico do Lugar das Raizes de G(s) = K(s+3)/[s(s+1)(s^2+4s+16)]')
+}
+
+- GRÁFICOS DE LUGARES DAS RAIZES - EX.2
+{
+#
+# Especificando a funcao de transferencia = s, que é a variavel de Laplace
+#
+s = co.tf('s');
+#
+num = 1
+den = s*(s+0.5)*(s**2+0.6*s+10)
+sys = num/den
+sys2 = 1/(s**2+0.6*s+10)
+#
+p   = co.poles(sys)    # todos os polos
+p2  = co.poles(sys2)   # polos complexos
+print('Polos:')
+print(p)
+#
+#control.root_locus(sys, kvect=None, xlim=None, ylim=None, plotstr=None, plot=True, print_gain=None, grid=None, ax=None, **kwargs)
+#rlist, klist = co.root_locus(sys)
+K = np.linspace( 0, 1000, 201)
+rlist, klist = co.root_locus(sys,kvect=K,plotstr='x',xlim=[-4,4], ylim=[-4,4], plot=False)
+lista1x = []
+lista1y = []
+lista2x = []
+lista2y = []
+lista3x = []
+lista3y = []
+lista4x = []
+lista4y = []
+for ii in range(len(rlist)):
+  for jj in range(len(rlist[ii])):
+    if ii == 0:
+      plt.plot(rlist[ii][jj].real,rlist[ii][jj].imag,'o',fillstyle = 'none')
+      #for kk in range(len(z)):
+        #plt.plot(z[kk].real,z[kk].imag,'o')
+    if jj == 0:
+      lista1x.append(rlist[ii][jj].real)
+      lista1y.append(rlist[ii][jj].imag)
+    elif jj == 1:
+      lista2x.append(rlist[ii][jj].real)
+      lista2y.append(rlist[ii][jj].imag)
+    elif jj == 2:
+      lista3x.append(rlist[ii][jj].real)
+      lista3y.append(rlist[ii][jj].imag)
+    elif jj == 3:
+      lista4x.append(rlist[ii][jj].real)
+      lista4y.append(rlist[ii][jj].imag)
+plt.show
+plt.plot(lista1x,lista1y,'o',fillstyle = 'none')
+plt.plot(lista2x,lista2y,'o',fillstyle = 'none')
+plt.plot(lista3x,lista3y,'o',fillstyle = 'none')
+plt.plot(lista4x,lista4y,'o',fillstyle = 'none')
+plt.grid()
+plt.title('Gráfico do Lugar das Raizes de G(s) = K/[s(s+0.5)(s^2+0.6s+10)]')
+print('Gráfico do Lugar das Raizes de G(s) = K/[s(s+0.5)(s^2+0.6s+10)]')
+# E MAIS ALGUNS GRAFICOS
+#
+# Especificando a funcao de transferencia = s, que é a variavel de Laplace
+#
+s = co.tf('s');
+#
+K1 = np.linspace( 0,  20,101)
+K2 = np.linspace(20,  30,101)
+K3 = np.linspace(30,1000,195)
+K = []
+K.extend(K1)
+K.extend(K2)
+K.extend(K3)
+rlist, klist = co.root_locus(sys,kvect=K,plotstr='x',xlim=[-4,4], ylim=[-4,4], plot=False)
+lista1x = []
+lista1y = []
+lista2x = []
+lista2y = []
+lista3x = []
+lista3y = []
+lista4x = []
+lista4y = []
+for ii in range(len(rlist)):
+  for jj in range(len(rlist[ii])):
+    if ii == 0:
+      plt.plot(rlist[ii][jj].real,rlist[ii][jj].imag,'o',fillstyle = 'none')
+      #for kk in range(len(z)):
+        #plt.plot(z[kk].real,z[kk].imag,'o')
+    if jj == 0:
+      lista1x.append(rlist[ii][jj].real)
+      lista1y.append(rlist[ii][jj].imag)
+    elif jj == 1:
+      lista2x.append(rlist[ii][jj].real)
+      lista2y.append(rlist[ii][jj].imag)
+    elif jj == 2:
+      lista3x.append(rlist[ii][jj].real)
+      lista3y.append(rlist[ii][jj].imag)
+    elif jj == 3:
+      lista4x.append(rlist[ii][jj].real)
+      lista4y.append(rlist[ii][jj].imag)
+plt.show
+plt.plot(lista1x,lista1y,'o',fillstyle = 'none')
+plt.plot(lista2x,lista2y,'o',fillstyle = 'none')
+plt.plot(lista3x,lista3y,'o',fillstyle = 'none')
+plt.plot(lista4x,lista4y,'o',fillstyle = 'none')
+plt.grid()
+plt.title('Gráfico do Lugar das Raizes de G(s) = K/[s(s+0.5)(s^2+0.6s+10)]')
+print('Gráfico do Lugar das Raizes de G(s) = K/[s(s+0.5)(s^2+0.6s+10)]')
+}
+
+- GRÁFICOS DE LUGARES DAS RAIZES - EX.3
+{
+#
+# Especificando a funcao de transferencia = s, que é a variavel de Laplace
+#
+s = co.tf('s');
+#
+A = [[   0,   1,   0],
+     [   0,   0,   1],
+     [-160, -56, -14]]
+B = [[  0],
+     [  1],
+     [-14]]
+C = [1, 0, 0]
+D = [0]
+sysEE = co.ss(A,B,C,D)
+K = np.linspace( 0, 400, 401)
+rlist, klist = co.root_locus(sysEE,kvect=K,xlim=[-20,20], ylim=[-20,20], plot=True, print_gain=True)
+plt.title('Gráfico do Lugar das Raízes do Sistema Definido no Espaço de Estados')
+print('Gráfico do Lugar das Raízes do Sistema Definido no Espaço de Estados')
+}
+
+- ACHAR AS CONTANTES ζ e Wn
+{
+#
+# Especificando a funcao de transferencia = s, que é a variavel de Laplace
+#
+s = co.tf('s');
+#
+from control.grid import sgrid, zgrid
+plt.show
+sgrid()
+plt.title('Linhas com \zeta constantes e Círculos \omega_n constantes')
+plt.xlabel('Eixo Real')
+plt.ylabel('Eixo Imaginário')
+}
+
+- GRÁFICOS DE LUGARES DAS RAIZES - EX.4 - 
+{
+#
+# Especificando a funcao de transferencia = s, que é a variavel de Laplace
+#
+s = co.tf('s');
+#
+import math
+num = [0, 1]
+den = [1, 4, 5, 0]
+sys = co.tf(num,den)
+K = np.linspace( 0, 1000, 10001)
+rlist, klist = co.root_locus(sys,kvect=K,xlim=[-3,1], ylim=[-2,2], plot=True, print_gain=False, grid=None)
+retax = np.linspace( 0, -2, 201)
+retay1up = []
+retay2up = []
+retay1down = []
+retay2down = []
+circle1up = []
+circle2up = []
+circle1down = []
+circle2down = []
+x = math.acos(0.5)*180/np.pi
+print(x)
+for ii in range(len(retax)):
+  retay1up.append(  -math.tan(math.acos(0.5))*retax[ii] )
+  retay2up.append(  -math.tan(math.acos(0.707))*retax[ii] )
+  retay1down.append(  math.tan(math.acos(0.5))*retax[ii] )
+  retay2down.append(  math.tan(math.acos(0.707))*retax[ii] )
+  circle1up.append(   np.sqrt(1.0**2 - retax[ii]**2) )
+  circle2up.append(   np.sqrt(2.0**2 - retax[ii]**2) )
+  circle1down.append(  -1*np.sqrt(1.0**2 - retax[ii]**2) )
+  circle2down.append(  -1*np.sqrt(2.0**2 - retax[ii]**2) )
+plt.plot(retax,retay1up,'--',fillstyle = 'none')
+plt.plot(retax,retay1down,'--',fillstyle = 'none')
+plt.plot(retax,retay2up,'--',fillstyle = 'none')
+plt.plot(retax,retay2down,'--',fillstyle = 'none')
+plt.plot(retax,circle1up,'--',fillstyle = 'none')
+plt.plot(retax,circle1down,'--',fillstyle = 'none')
+plt.plot(retax,circle2up,'--',fillstyle = 'none')
+plt.plot(retax,circle2down,'--',fillstyle = 'none')
+plt.text(-2.15,1.65,'$\zeta$=0.707')
+plt.text(-2.15,-1.85,'$\zeta$=0.707')
+plt.text(-1.15,1.75,'$\zeta$=0.5')
+plt.text(-1.15,-1.85,'$\zeta$=0.5')
+}
+
+- GRÁFICOS DE LUGARES DAS RAIZES - EX.5 - condicionalmente estável
+{
+#
+# Especificando a funcao de transferencia = s, que é a variavel de Laplace
+#
+s = co.tf('s');
+#
+num = s**2 + 2*s + 4
+den = s*(s + 4)*(s + 6)*(s**2 + 1.4*s + 1)
+sys = num/den
+sys2 = 1/(s**2 + 1.4*s + 1)
+p    = co.poles(sys)   # todos os polos
+p2   = co.poles(sys2)  # so' os polos complexos
+print('Polos:')
+print(p)
+z    = co.zeros(sys)   # todos os zeros
+print('Zeros:')
+print(z)
+plt.figure
+rlist, klist = co.root_locus(sys,xlim=[-7,3], ylim=[-5,5], plot=True, print_gain=False, grid=None)
+plt.title('Gráfico do Lugar das Raízes de G(s)=K*(s^2+2*s+4)/s*(s+4)*(s+6)*(s^2+1.4*s+1)')
+plt.xlabel('Eixo Real')
+plt.ylabel('Eixo Imaginário')
+plt.text(0.25, 1.1,'K = 12');
+plt.text(0.25, 2.1,'K = 73');
+plt.text(0.25,4.15,'K = 154')
+}
+
+- GRÁFICOS DE LUGARES DAS RAIZES - EX.6 -  fase não mínima
+{
+#
+# Especificando a funcao de transferencia = s, que é a variavel de Laplace
+#
+s = co.tf('s');
+#
+num = [-0.5, 1]
+den = [1, 1, 0]
+sys = co.tf(num,den)
+plt.figure(9)
+rlist, klist = co.root_locus(sys,xlim=[-2,6], ylim=[-4,4], plot=True, print_gain=False, grid=None)
+plt.title('Gráfico do Lugar das Raízes de G(s)=K*(1 - 0.5s)/[s*(s+1)]')
+plt.text(0.15, 1.3,'K = 1.95')
+#
+num = [0.5, 1]
+den = [1, 1, 0]
+sys = co.tf(num,den)
+plt.figure(10)
+rlist, klist = co.root_locus(sys,xlim=[-5,0], ylim=[-4,4], plot=True, print_gain=False, grid=None)
+plt.title('Gráfico do Lugar das Raízes de G(s)=K*(1 + 0.5s)/[s*(s+1)]')
+#
+num = [0.5, 1]
+den = [1, 1, 0]
+sys1 = co.tf(num,den)
+sysMF = co.feedback(sys1, sys2=1, sign=-1)
+plt.figure(11)
+plt.show()
+t_step, y_step  = co.step_response(sysMF)
+plt.plot(t_step,y_step)
+plt.grid()
+plt.title('Resposta do degrau com K = 1 de G(s)=K*(1 + 0.5s)/[s*(s+1)]')
+#
+num = [-0.5, 1]
+den = [1, 1, 0]
+sys1 = co.tf(num,den)
+sysMF = co.feedback(sys1, sys2=1, sign=-1)
+plt.figure(11)
+plt.show()
+t_step, y_step  = co.step_response(sysMF)
+plt.plot(t_step,y_step)
+plt.grid()
+plt.title('Resposta do degrau com K = 1 de G(s)=K*(1 - 0.5s)/[s*(s+1)]')
+}
+ 
